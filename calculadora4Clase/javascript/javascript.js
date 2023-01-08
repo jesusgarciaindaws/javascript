@@ -1,33 +1,67 @@
 'use strict';
 // objeto calculadora
-const calculadora = {
-  lastResult: undefined, // aqui guardo el ultimo resultado
+class Calculadora {
+  lastResult = 0; // aqui guardo el ultimo resultado
 
-  suma: function (a, b) {
+  get name () {
+    return this.lastResult;
+  }
+
+  set name (valor) {
+    this.lastResult = valor;
+  }
+
+  suma (a, b) {
+    console.log(a);
+    console.log(b);
     this.lastResult = a + b;
     return this.lastResult;
-  },
-  resta: function (a, b) {
+  }
+
+  resta (a, b) {
+    console.log(a);
+    console.log(b);
     this.lastResult = a - b;
     return this.lastResult;
-  },
-  multiplicacion: function (a, b) {
+  }
+
+  multiplicacion (a, b) {
+    console.log(a);
+    console.log(b);
     this.lastResult = a * b;
     return this.lastResult;
-  },
-  division: function (a, b) {
+  }
+
+  division (a, b) {
+    console.log(a);
+    console.log(b);
     this.lastResult = a / b;
     return this.lastResult;
   }
-};
+}
+const calculadora = new Calculadora();
+
+class OperadorError extends Error {
+  constructor (message) {
+    super(message);
+    this.name = 'Operador incorrecto';
+  }
+}
+
+class OperandoError extends Error {
+  constructor (message) {
+    super(message);
+    this.name = 'Operandos invalidos';
+  }
+}
 
 // expresión de función
 const operandosvalidos = function (operando1, operando2) {
   if (!isFinite(operando1) || !isFinite(operando2)) {
     window.alert('Tienes que introducir números');
-    return false;
-  } else {
     return true;
+  } else {
+    return false;
   }
 };
 
@@ -51,6 +85,7 @@ function pedirOperando () {
       if (op === '+' || op === '-' || op === '*' || op === '/') {
         salir = true;
       } else {
+        console.log(op);
         window.alert('La operación introducida es errónea. Prueba de nuevo.');
       }
     }
@@ -72,6 +107,7 @@ do {
     let seguir = true;
     do {
       const operandos = window.prompt('Introduce los operandos separados por espacio', '');
+      console.log(operandos);
       if (operandos == null || operandos === undefined) {
         seguir = false;
       } else {
@@ -110,8 +146,7 @@ do {
         operando1 = Number(operando1);
         operando2 = Number(operando2);
       }
-      console.log(operandosvalidos(operando1, operando2));
-    } while (seguir && !operandosvalidos(operando1, operando2));
+    } while (seguir && operandosvalidos(operando1, operando2));
   }
 
   if (op == null || op === undefined || operando1 == null) {
