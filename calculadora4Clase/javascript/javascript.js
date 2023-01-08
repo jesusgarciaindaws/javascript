@@ -12,29 +12,21 @@ class Calculadora {
   }
 
   suma (a, b) {
-    console.log(a);
-    console.log(b);
     this.lastResult = a + b;
     return this.lastResult;
   }
 
   resta (a, b) {
-    console.log(a);
-    console.log(b);
     this.lastResult = a - b;
     return this.lastResult;
   }
 
   multiplicacion (a, b) {
-    console.log(a);
-    console.log(b);
     this.lastResult = a * b;
     return this.lastResult;
   }
 
   division (a, b) {
-    console.log(a);
-    console.log(b);
     this.lastResult = a / b;
     return this.lastResult;
   }
@@ -57,8 +49,7 @@ class OperandoError extends Error {
 
 // expresión de función
 const operandosvalidos = function (operando1, operando2) {
-  if (!isFinite(operando1) || !isFinite(operando2)) {
-    window.alert('Tienes que introducir números');
+  if (isFinite(operando1) && isFinite(operando2) && operando2 !== '') {
     return true;
   } else {
     return false;
@@ -74,19 +65,24 @@ let operando2 = null;
 function pedirOperando () {
   let salir = false;
   while (!salir) {
-    op = window.prompt('Elije operación: +, -, * ó /', '');
+    try {
+      op = window.prompt('Elije operación: +, -, * ó /', '');
 
-    if (op === null || op === undefined || op === '') {
-      salir = true;
-      op = null;
-    } else {
-      op = op.trim();
-
-      if (op === '+' || op === '-' || op === '*' || op === '/') {
+      if (op === null || op === undefined || op === '') {
         salir = true;
+        op = null;
       } else {
-        console.log(op);
-        window.alert('La operación introducida es errónea. Prueba de nuevo.');
+        op = op.trim();
+
+        if (op === '+' || op === '-' || op === '*' || op === '/') {
+          salir = true;
+        } else {
+          throw new OperadorError('La operación introducida es errónea. Prueba de nuevo.');
+        }
+      }
+    } catch (error) {
+      if (error instanceof OperadorError) {
+        window.alert(error.message);
       }
     }
   }
@@ -107,46 +103,61 @@ do {
     let seguir = true;
     do {
       const operandos = window.prompt('Introduce los operandos separados por espacio', '');
-      console.log(operandos);
       if (operandos == null || operandos === undefined) {
         seguir = false;
       } else {
-        // expresiones de función
-        let i = 0;
-        operando1 = '';
-        operando2 = '';
+        try {
+          let i = 0;
+          operando1 = '';
+          operando2 = '';
 
-        for (; i < operandos.length; i++) {
-          if (operandos[i] !== ' ') {
-            operando1 += operandos[i];
-          } else {
-            if (operando1 !== '') {
-              break;
+          for (; i < operandos.length; i++) {
+            if (operandos[i] !== ' ') {
+              operando1 += operandos[i];
+            } else {
+              if (operando1 !== '') {
+                break;
+              }
             }
           }
-        }
 
-        for (; i < operandos.length; i++) {
-          if (operandos[i] !== ' ') {
-            operando2 += operandos[i];
-          } else {
-            if (operando2 !== '') {
-              break;
+          for (; i < operandos.length; i++) {
+            if (operandos[i] !== ' ') {
+              operando2 += operandos[i];
+            } else {
+              if (operando2 !== '') {
+                break;
+              }
             }
           }
-        }
 
-        if (operando1 === 'R') {
-          operando1 = calculadora.lastResult;
-        }
-        if (operando2 === 'R') {
-          operando2 = calculadora.lastResult;
-        }
+          if (operandosvalidos(operando1, operando2)) {
+            seguir = false;
+          } else {
+            seguir = true;
+            if (isFinite(operando1) && operando2 === '') {
+              throw new OperandoError('no has introducido segundo operando.');
+            } else {
+              throw new OperandoError('Los datos no se han introducido adecuadamente, vuelve a intentarlo.');
+            }
+          }
 
-        operando1 = Number(operando1);
-        operando2 = Number(operando2);
+          if (operando1 === 'R') {
+            operando1 = calculadora.lastResult;
+          }
+          if (operando2 === 'R') {
+            operando2 = calculadora.lastResult;
+          }
+
+          operando1 = Number(operando1);
+          operando2 = Number(operando2);
+        } catch (error) {
+          if (error instanceof OperandoError) {
+            window.alert(error.message);
+          }
+        }
       }
-    } while (seguir && operandosvalidos(operando1, operando2));
+    } while (seguir);
   }
 
   if (op == null || op === undefined || operando1 == null) {
